@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  django_app:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    environment:
+      - DB_HOST=app_db
+      - DB_NAME=devdb
+      - DB_USER=app
+      - DB_PASSWORD=changeme
+      - SECRET_KEY=asdasdadsdasfasfas
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - app_db
+  
+  app_db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=changeme
